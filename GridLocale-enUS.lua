@@ -52,6 +52,10 @@ local strings_enUS = {
 	["^Corpse of (.+)$"] = true,
 	
 	--}}}
+	--{{{ GridStatusManaBar
+	["Unit Mana"] = true,
+
+	--}}}
 	--{{{ GridStatusHealth
 	["Unit health"] = true,
 	["Health deficit"] = true,
@@ -129,8 +133,10 @@ local strings_enUS = {
 	
 	--{{{ GridFrame
 	["Center Text"] = true,
+	["Text 2"] = true,
 	["Border"] = true,
 	["Health Bar"] = true,
+	["Mana Bar"] = true,
 	["Bottom Left Corner"] = true,
 	["Frame Alpha"] = true,
 	["Bottom Right Corner"] = true,

@@ -1,5 +1,5 @@
 ## Interface: 11200
-## Title: GridEnhanced (0.11)
+## Title: GridEE (0.12)
 ## Notes: A modular, lightweight and screen-estate saving grid of party/raid unit frames
 ## Author: Vallan, Pastamancer & Maia
 ## Notes: This is Grid, but maintained and enhanced specifically for the 1.12 community.
@@ -63,3 +63,4 @@ GridStatusMana.lua
 GridStatusHeals.lua
 GridStatusAuras.lua
 GridStatusRange.lua
+GridStatusManaBar.lua

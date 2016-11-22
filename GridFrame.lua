@@ -20,6 +20,8 @@ local indicators = {
 	[7] = { type = "corner4", name = L["Top Left Corner"] },
 	[8] = { type = "icon", name = L["Center Icon"] },
 	[9] = { type = "frameAlpha", name = L["Frame Alpha"] },
+	[10]= { type = "manabar", name = L["Mana Bar"] },
+	[11]= { type = "text2", name = L["Text 2"] }
 }
 
 --}}}
@@ -171,34 +173,73 @@ function GridFrameClass.prototype:CreateFrames()
 	-- this is necessary as there's no other way to implement status bars that grow in the other direction than normal
 	f.BarBG = f:CreateTexture()
 	f.BarBG:SetTexture("Interface\\Addons\\GridEnhanced\\gradient32x32")
-	f.BarBG:SetPoint("CENTER", f, "CENTER")
-	f.BarBG:SetWidth(GridFrame:GetFrameWidth()-4)
-	f.BarBG:SetHeight(GridFrame:GetFrameHeight()-4)
+	if GridFrame.db.profile.horizontal then
+		f.BarBG:SetWidth(GridFrame:GetFrameWidth()-2)
+		f.BarBG:SetHeight(GridFrame:GetFrameHeight() - (4 + GridFrame.db.profile.ManabarSize))
+		f.BarBG:SetPoint("TOP", f, "TOP", 0, -2)
+	else
+		f.BarBG:SetWidth(GridFrame:GetFrameWidth() - (4 + GridFrame.db.profile.ManabarSize))
+		f.BarBG:SetHeight(GridFrame:GetFrameHeight()-2)
+		f.BarBG:SetPoint("LEFT", f, "LEFT", -2, 0)
+	end
 
 	-- create bar
 	f.Bar = CreateFrame("StatusBar", nil, f)
 	f.Bar:SetStatusBarTexture("Interface\\Addons\\GridEnhanced\\gradient32x32")
 	if GridFrame.db.profile.horizontal then
-		f.Bar:SetOrientation("HORIZONTAL")	
+		f.Bar:SetOrientation("HORIZONTAL")
+		f.Bar:SetWidth(GridFrame:GetFrameWidth()-2)
+		f.Bar:SetHeight(GridFrame:GetFrameHeight() - (4 + GridFrame.db.profile.ManabarSize))
+		f.Bar:SetPoint("TOP", f, "TOP", 0, -2)
 	else
 		f.Bar:SetOrientation("VERTICAL")
+		f.Bar:SetWidth(GridFrame:GetFrameWidth() - (4 + GridFrame.db.profile.ManabarSize))
+		f.Bar:SetHeight(GridFrame:GetFrameHeight()-2)
+		f.Bar:SetPoint("LEFT", f, "LEFT", -2, 0)
 	end
 
 	f.Bar:SetMinMaxValues(0,100)
 	f.Bar:SetValue(100)
 	f.Bar:SetStatusBarColor(0,0,0,0.8)
-	f.Bar:SetPoint("CENTER", f, "CENTER")
 	f.Bar:SetFrameLevel(4)
-	f.Bar:SetWidth(GridFrame:GetFrameWidth()-4)
-	f.Bar:SetHeight(GridFrame:GetFrameHeight()-4)
+	
+
+	-- mana bar
+	f.BarMana = CreateFrame("StatusBar", nil, f)
+	f.BarMana:SetStatusBarTexture("Interface\\Addons\\GridEnhanced\\white16x16")
+	if GridFrame.db.profile.horizontal then
+		f.BarMana:SetOrientation("HORIZONTAL")
+		f.BarMana:SetWidth(GridFrame:GetFrameWidth()-2)
+		f.BarMana:SetHeight(GridFrame.db.profile.ManabarSize)
+		f.BarMana:SetPoint("BOTTOM", f, "BOTTOM", 0, 2)
+	else
+		f.BarMana:SetOrientation("VERTICAL")
+		f.BarMana:SetWidth(GridFrame.db.profile.ManabarSize)
+		f.BarMana:SetHeight(GridFrame:GetFrameHeight()-2)
+		f.BarMana:SetPoint("RIGHT", f, "RIGHT", 2, 0)
+	end
+
+	f.BarMana:SetMinMaxValues(0,100)
+	f.BarMana:SetValue(100)
+	f.BarMana:SetStatusBarColor(0,0.4,1,0.8)
+	f.BarMana:SetFrameLevel(5)
 	
 	-- create center text
 	f.Text = f.Bar:CreateFontString(nil, "ARTWORK")
 	f.Text:SetFontObject(GameFontHighlightSmall)
 	f.Text:SetFont(STANDARD_TEXT_FONT,GridFrame.db.profile.FontSize)
-	f.Text:SetJustifyH("CENTER")
+	f.Text:SetJustifyH("LEFT")
 	f.Text:SetJustifyV("CENTER")
-	f.Text:SetPoint("CENTER", f, "CENTER")
+	f.Text:SetPoint("TOPLEFT", f, "TOPLEFT", 4, -4)
+
+	f.Text2 = f.Bar:CreateFontString(nil, "ARTWORK")
+	f.Text2:SetFontObject(GameFontRedLarge)
+	f.Text2:SetFont(STANDARD_TEXT_FONT,GridFrame.db.profile.FontSize)
+	f.Text2:SetJustifyH("LEFT")
+	f.Text2:SetJustifyV("CENTER")
+	f.Text2:SetPoint("BOTTOMLEFT", f, "BOTTOMLEFT", 4, (GridFrame.db.profile.ManabarSize+4))
+--	f.Text2:SetTextColor(1.0, 0, 0, 1)
+--	f.Text2:SetText("-2548")
 	
 	-- create icon
 	f.Icon = f.Bar:CreateTexture("Icon", "OVERLAY")
@@ -230,6 +271,10 @@ end
 function GridFrameClass.prototype:GetFrameWidth()
 	return self.frame:GetWidth()
 end
+
+--function GridFrameClass.prototype:GetManaBarSize()
+--	return self.frame:GetManaBarSize()
+--end
 
 function GridFrameClass.prototype:ShowFrame()
 	return self.frame:Show()
@@ -268,6 +313,17 @@ function GridFrameClass.prototype:SetBar(value, max)
 		max = 100
 	end
 	self.frame.Bar:SetValue(value/max*100)
+end
+
+function GridFrameClass.prototype:SetBarMana(value, max)
+	if max == nil then
+		max = 100
+	end
+	self.frame.BarMana:SetValue(value/max*100)
+end
+
+function GridFrameClass.prototype:SetBarManaColor(r, g, b, a)
+	self.frame.BarMana:SetStatusBarColor(r, g, b, a)
 end
 
 function GridFrameClass.prototype:SetBarColor(r, g, b, a)
@@ -311,6 +367,19 @@ function GridFrameClass.prototype:SetText(text, color)
 	end
 end
 
+function GridFrameClass.prototype:SetText2(text, color)
+	text = string.sub(text, 1, 8)
+	self.frame.Text2:SetText(text)
+	if text ~= "" then
+		self.frame.Text2:Show()
+	else
+		self.frame.Text2:Hide()
+	end
+	if color then
+		self.frame.Text2:SetTextColor(color.r, color.g, color.b, color.a)
+	end
+end
+
 function GridFrameClass.prototype:ResizeCornerIndicators()
 	local size,f,corners = GridFrame.db.profile.CornerSize, self.frame
 			
@@ -339,6 +408,7 @@ function GridFrameClass.prototype:SetFontSize()
 	local size,f = GridFrame.db.profile.FontSize, self.frame
 			
 	f.Text:SetFont(STANDARD_TEXT_FONT,GridFrame.db.profile.FontSize)
+	f.Text2:SetFont(STANDARD_TEXT_FONT,GridFrame.db.profile.FontSize)
 end
 
 
@@ -355,7 +425,7 @@ function GridFrameClass.prototype:CreateIndicator(indicator)
 			      })
 	self.frame[indicator]:SetBackdropBorderColor(0,0,0,1)
 	self.frame[indicator]:SetBackdropColor(1,1,1,1)
-	self.frame[indicator]:SetFrameLevel(5)
+	self.frame[indicator]:SetFrameLevel(6)
 	self.frame[indicator]:Hide()
 	
 	-- position indicator wherever needed
@@ -387,6 +457,8 @@ function GridFrameClass.prototype:SetIndicator(indicator, color, text, value, ma
 		self.frame[indicator]:Show()
 	elseif indicator == "text" then
 		self:SetText(text, color)
+	elseif indicator == "text2" then
+		self:SetText2(text, color)
 	elseif indicator == "frameAlpha" then
 		for x = 1, 4 do
 			local corner = "corner"..x;
@@ -401,6 +473,13 @@ function GridFrameClass.prototype:SetIndicator(indicator, color, text, value, ma
 		end
 		if type(color) == "table" then
 			self:SetBarColor(color.r, color.g, color.b, color.a)
+		end	
+	elseif indicator == "manabar" then
+		if value and maxValue then
+			self:SetBarMana(value, maxValue)
+		end
+		if type(color) == "table" then
+			self:SetBarManaColor(color.r, color.g, color.b, color.a)
 		end	
 	elseif indicator == "icon" then
 		if texture then
@@ -423,6 +502,8 @@ function GridFrameClass.prototype:ClearIndicator(indicator)
 		end
 	elseif indicator == "text" then
 		self.frame:SetText("")
+	elseif indicator == "text2" then
+		self:SetText2("")
 	elseif indicator == "frameAlpha" then
 		for x = 1, 4 do
 			local corner = "corner"..x;
@@ -433,6 +514,8 @@ function GridFrameClass.prototype:ClearIndicator(indicator)
 		self.frame:SetAlpha(1)
 	elseif indicator == "bar" then
 		self:SetBar(100)
+	elseif indicator == "manabar" then
+		self:SetBarMana(100)
 	elseif indicator == "icon" then
 		self.frame.Icon:SetTexture(1,1,1,0)
 	end
@@ -450,6 +533,7 @@ GridFrame.frameClass = GridFrameClass
 GridFrame.defaultDB = {
 	FrameHeight = 26,
 	FrameWidth = 26,
+	ManabarSize = 6,
 	CornerSize = 5,
 	FontSize = 8,
 	debug = false,
@@ -458,6 +542,11 @@ GridFrame.defaultDB = {
 	tooltip = false,
 	statusmap = {
 		["text"] = {
+			alert_death = true,
+			unit_name = true,
+			unit_healthDeficit = true,
+		},
+		["text2"] = {
 			alert_death = true,
 			unit_name = true,
 			unit_healthDeficit = true,
@@ -488,6 +577,9 @@ GridFrame.defaultDB = {
 			alert_death = true,
 			alert_offline = true,
 			unit_health = true
+		},
+		["manabar"] = {
+			unit_mana = true
 		},
 		["icon"] = {
 			debuff_poison = true,
@@ -596,7 +688,24 @@ GridFrame.options = {
 						      GridFrame:UpdateAllFrames()
 						      GridLayout:LoadLayout(GridLayout.db.profile.layout)
 					      end,
-				},	
+				},
+				["manabar"] = {
+					type = "range",
+					name = "Mana size",
+					desc = "Adjust Mana Bar Size.",
+					min = 1,
+					max = 24,
+					step = 1,
+					isPercent = false,
+					get = function ()
+						      return GridFrame.db.profile.ManabarSize
+					      end,
+					set = function (v)
+						      GridFrame.db.profile.ManabarSize = v
+						      GridFrame:UpdateAllFrames()
+						      GridLayout:LoadLayout(GridLayout.db.profile.layout)
+					      end,
+				}
 			}
 		},
 		["font_size"] = {
@@ -703,6 +812,10 @@ function GridFrame:GetFrameWidth()
 	return self.db.profile.FrameWidth
 end
 
+--function GridFrame:GetManaBarSize()
+--	return self.db.profile.ManabarSize
+--end
+
 function GridFrame:UpdateIndicators(frame)
 	local indicator, status
 	local unitid = frame.unit
@@ -729,12 +842,30 @@ end
 function GridFrameClass.prototype:UpdateDimensions()
 	local f = self.frame
 	f:SetWidth(GridFrame:GetFrameWidth())
-    f.BarBG:SetWidth(GridFrame:GetFrameWidth()-4)
-    f.Bar:SetWidth(GridFrame:GetFrameWidth()-4)
-
     f:SetHeight(GridFrame:GetFrameHeight())
-    f.BarBG:SetHeight(GridFrame:GetFrameHeight()-4)
-    f.Bar:SetHeight(GridFrame:GetFrameHeight()-4)
+
+    if GridFrame.db.profile.horizontal then
+    	-- mana bar
+    	f.BarMana:SetHeight(GridFrame.db.profile.ManabarSize)
+
+
+    	-- health bar
+		f.Bar:SetWidth(GridFrame:GetFrameWidth()-2)
+		f.Bar:SetHeight(GridFrame:GetFrameHeight() - (4 + GridFrame.db.profile.ManabarSize))
+		f.BarBG:SetWidth(GridFrame:GetFrameWidth()-2)
+		f.BarBG:SetHeight(GridFrame:GetFrameHeight() - (4 + GridFrame.db.profile.ManabarSize))
+	else
+		-- mana bar
+		f.BarMana:SetWidth(GridFrame.db.profile.ManabarSize)
+
+		-- health bar
+		f.Bar:SetWidth(GridFrame:GetFrameWidth() - (4 + GridFrame.db.profile.ManabarSize))
+		f.Bar:SetHeight(GridFrame:GetFrameHeight()-2)
+		f.BarBG:SetWidth(GridFrame:GetFrameWidth() - (4 + GridFrame.db.profile.ManabarSize))
+		f.BarBG:SetHeight(GridFrame:GetFrameHeight()-2)
+	end
+
+	GridFrame:Debug("Manabar Size ", GridFrame.db.profile.ManabarSize)
 end
 
 
