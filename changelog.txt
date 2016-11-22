@@ -1,0 +1,28 @@
+0.11
+Adjustable font size
+0.10
+Added FrameAlpha indicator
+Range check opacity can only be done through frame alpha now.
+0.9
+Added unit tooltip option
+Removed Range Checking (temp)
+0.8
+Fix for resizing while have groups change
+0.7
+More efficient range detection
+0.6
+Fixed Debuff Icons
+Added corner indicator sizing options
+0.5 
+Horizontal Health Option. 
+Up to 8 chars for names. 
+Possible zone proximity fix. 
+Minor Lua fixes.
+0.4 
+Added Range Check
+0.3 
+Fixed Aggro
+0.2 
+Added frame dimesion support 
+0.1 
+Initial commit of Grid backport
