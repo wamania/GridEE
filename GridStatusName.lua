@@ -14,7 +14,7 @@ GridStatusName.defaultDB = {
 		enable = true,
 		color = { r = 1, g = 1, b = 1, a = 1 },
 		priority = 1,
-		letters = 3,
+		letters = 8,
 		class = true,
 	},
 }
