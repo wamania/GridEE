@@ -531,24 +531,25 @@ GridFrame.frameClass = GridFrameClass
 --{{{  AceDB defaults
 
 GridFrame.defaultDB = {
-	FrameHeight = 26,
-	FrameWidth = 26,
+	FrameHeight = 30,
+	FrameWidth = 70,
 	ManabarSize = 6,
 	CornerSize = 5,
 	FontSize = 8,
 	debug = false,
-	invertBarColor = false,
-	horizontal = false,
+	invertBarColor = true,
+	horizontal = true,
 	tooltip = false,
 	statusmap = {
 		["text"] = {
-			alert_death = true,
+			alert_death = false,
 			unit_name = true,
-			unit_healthDeficit = true,
+			unit_healthDeficit = false,
+			unit_health = false
 		},
 		["text2"] = {
-			alert_death = true,
-			unit_name = true,
+			alert_death = false,
+			unit_name = false,
 			unit_healthDeficit = true,
 		},
 		["border"] = {
@@ -559,6 +560,7 @@ GridFrame.defaultDB = {
 			alert_heals = true,
 		},
 		["corner2"] = {
+			alert_lowMana = true,
 		},
 		["corner3"] = {
 			debuff_poison = true,
@@ -567,6 +569,7 @@ GridFrame.defaultDB = {
 			debuff_curse = true,
 		},
 		["corner4"] = {
+			alert_range = true,
 			alert_aggro = true,
 		},
 		["frameAlpha"] = {
@@ -574,8 +577,8 @@ GridFrame.defaultDB = {
 			alert_offline = true,
 		},
 		["bar"] = {
-			alert_death = true,
-			alert_offline = true,
+			unit_name = false,
+			alert_lowMana = true,
 			unit_health = true
 		},
 		["manabar"] = {
