@@ -26,7 +26,7 @@ GridStatusHealth.defaultDB = {
 		enable = true,
 		color = { r = 1, g = 1, b = 1, a = 1 },
 		priority = 30,
-		threshold = 80,
+		threshold = 100,
 		range = false,
 		useClassColors = true,
 	},
