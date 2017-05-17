@@ -1,9 +1,9 @@
 ## Interface: 11200
 ## Title: GridEE (0.12)
 ## Notes: A modular, lightweight and screen-estate saving grid of party/raid unit frames
-## Author: Vallan, Pastamancer & Maia
+## Author: Vallan, Pastamancer, Maia & Wamania
 ## Notes: This is Grid, but maintained and enhanced specifically for the 1.12 community.
-## Version: 0.11
+## Version: 0.12
 
 ## DefaultState: enabled
 ## LoadOnDemand: 0
